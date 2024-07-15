@@ -21,6 +21,16 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+router.get('/:id/courses', async (req, res) => {
+    try {
+        const {id} = req.params;
+        const course = await pool.query("SELECT c.course_id, c.course_name FROM courses c JOIN teacher_courses tc ON c.course_id = tc.course_id WHERE tc.teacher_id = $1", [id]);
+        res.json(course.rows)
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
 router.post('/', async (req, res) => {
     try {
         const {first_name, last_name, date_of_birth, email, phone_number} = req.body;
