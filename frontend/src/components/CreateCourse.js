@@ -12,7 +12,7 @@ const CreateCourse = () => {
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify(body)
             })
-            console.log(response);
+            window.location = "/";
         } catch (err) {
             console.error(err.message);
         }
