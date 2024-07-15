@@ -34,34 +34,12 @@ router.get('/:id/students', async (req, res) => {
     }
 })
 
-// Remove student from course
-router.delete('/:id/students/:student', async (req, res) => {
-    try {
-        const {id, student} = req.params;
-        const deleteStudentCourses = await pool.query("DELETE FROM student_courses WHERE course_id = $1 AND student_id", [id, student]);
-        res.json(`Removed student with ID ${student} from course with ID ${id}`);
-    } catch (err) {
-        console.error(err.message);
-    }
-})
-
 // Get course's teachers
 router.get('/:id/teachers', async (req, res) => {
     try {
         const {id} = req.params;
         const course = await pool.query("SELECT t.teacher_id, t.first_name, t.last_name, t.date_of_birth, t.email, t.phone_number FROM teacher_courses tc JOIN teachers t ON tc.teacher_id = t.teacher_id WHERE tc.course_id = $1", [id]);
         res.json(course.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-})
-
-// Remove teacher from course
-router.delete('/:id/teachers/:teacher', async (req, res) => {
-    try {
-        const {id, teacher} = req.params;
-        const deleteTeacherCourses = await pool.query("DELETE FROM teacher_courses WHERE course_id = $1 AND teacher_id = $2", [id, teacher]);
-        res.json(`Removed student with ID ${student} from course with ID ${id}`);
     } catch (err) {
         console.error(err.message);
     }
@@ -80,6 +58,28 @@ router.post('/', async (req, res) => {
             const newTeacherCourse = await pool.query("INSERT INTO teacher_courses (teacher_id, course_id) VALUES($1, $2)", [teacher, course_id]);
         }
         res.json(newCourse.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
+// Add student to course
+router.post('/:id/students/:student', async (req, res) => {
+    try {
+        const {id, student} = req.params;
+        const newStudentCourse = await pool.query("INSERT INTO student_courses (student_id, course_id) VALUES($1, $2)", [student, id]);
+        res.json(`Added student with ID ${student} to course with ID ${id}.`);
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
+// Add student to course
+router.post('/:id/teachers/:teacher', async (req, res) => {
+    try {
+        const {id, teacher} = req.params;
+        const newTeacherCourse = await pool.query("INSERT INTO teacher_courses (teacher_id, course_id) VALUES($1, $2)", [teacher, id]);
+        res.json(`Added teacher with ID ${teacher} to course with ID ${id}.`);
     } catch (err) {
         console.error(err.message);
     }
@@ -105,6 +105,28 @@ router.delete('/:id', async (req, res) => {
         const deleteTeacherCourses = await pool.query("DELETE FROM teacher_courses WHERE course_id = $1", [id]);
         const deleteCourse = await pool.query("DELETE FROM courses WHERE course_id = $1", [id]);
         res.json(`Deleted course with ID ${id}`);
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
+// Remove student from course
+router.delete('/:id/students/:student', async (req, res) => {
+    try {
+        const {id, student} = req.params;
+        const deleteStudentCourses = await pool.query("DELETE FROM student_courses WHERE course_id = $1 AND student_id = $2", [id, student]);
+        res.json(`Removed student with ID ${student} from course with ID ${id}`);
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
+// Remove teacher from course
+router.delete('/:id/teachers/:teacher', async (req, res) => {
+    try {
+        const {id, teacher} = req.params;
+        const deleteTeacherCourses = await pool.query("DELETE FROM teacher_courses WHERE course_id = $1 AND teacher_id = $2", [id, teacher]);
+        res.json(`Removed student with ID ${student} from course with ID ${id}`);
     } catch (err) {
         console.error(err.message);
     }
