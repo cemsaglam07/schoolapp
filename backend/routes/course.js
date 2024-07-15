@@ -48,15 +48,8 @@ router.get('/:id/teachers', async (req, res) => {
 // Create course
 router.post('/', async (req, res) => {
     try {
-        const {course_name, teachers, students} = req.body;
+        const {course_name} = req.body;
         const newCourse = await pool.query("INSERT INTO courses (course_name) VALUES($1) RETURNING *", [course_name]);
-        const course_id = newCourse.rows[0].course_id;
-        for (const student of students) {
-            const newStudentCourse = await pool.query("INSERT INTO student_courses (student_id, course_id) VALUES($1, $2)", [student, course_id]);
-        }
-        for (const teacher of teachers) {
-            const newTeacherCourse = await pool.query("INSERT INTO teacher_courses (teacher_id, course_id) VALUES($1, $2)", [teacher, course_id]);
-        }
         res.json(newCourse.rows[0]);
     } catch (err) {
         console.error(err.message);
