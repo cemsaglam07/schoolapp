@@ -1,16 +1,24 @@
 import './App.css';
-import React, {Fragment} from "react";
-import CreateCourse from './components/CreateCourse';
-import ListCourse from './components/ListCourse';
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Layout from "./pages/Layout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import NoPage from "./pages/NoPage";
 
 function App() {
   return (
-    <Fragment>
-      <div className="container">
-        <CreateCourse />
-        <ListCourse />
-      </div>
-    </Fragment>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="*" element={<NoPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
