@@ -5,8 +5,9 @@ CREATE TABLE students(
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     date_of_birth VARCHAR(10),
-    email TEXT,
-    phone_number TEXT
+    email TEXT UNIQUE,
+    phone_number TEXT,
+    pwd TEXT
 );
 
 CREATE TABLE teachers(
@@ -14,8 +15,9 @@ CREATE TABLE teachers(
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     date_of_birth VARCHAR(10),
-    email TEXT,
-    phone_number TEXT
+    email TEXT UNIQUE,
+    phone_number TEXT,
+    pwd TEXT
 );
 
 CREATE TABLE courses(
