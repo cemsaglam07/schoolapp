@@ -15,7 +15,14 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/login', async (req, res) => {
+
+
+// authentication endpoint
+router.get("/auth-endpoint", auth, (req, res) => {
+    res.json({ message: "You are authorized to access me" });
+  });
+
+router.post('/login', async (req, res) => {
     try {
         const {email, password} = req.body;
         const student = await pool.query("SELECT * FROM students WHERE email = $1", [email]);
@@ -25,7 +32,7 @@ router.get('/login', async (req, res) => {
             const {student_id, pwd} = student.rows[0];
             bcrypt.compare(password, pwd).then((passwordCheck) => {
                 if (!passwordCheck) {
-                    return res.status(400).send({message: "Passwords does not match", error});
+                    return res.status(400).send({message: "Passwords does not match"});
                 }
                 const token = jwt.sign({userId: student_id, userEmail: email}, process.env.TOKEN, { expiresIn: "24h" });
                 res.status(200).send({message: "Login successful", email: email, token});
@@ -35,12 +42,6 @@ router.get('/login', async (req, res) => {
         console.error(err.message);
     }
 })
-
-
-// authentication endpoint
-router.get("/auth-endpoint", auth, (req, res) => {
-    res.json({ message: "You are authorized to access me" });
-  });
 
 router.post('/register', async (req, res) => {
     try {
