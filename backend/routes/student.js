@@ -3,6 +3,7 @@ const pool = require('../db');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+import validator from 'validator';
 const auth = require("../auth");
 
 
@@ -25,17 +26,22 @@ router.get("/auth-endpoint", auth, (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const {email, password} = req.body;
+        if (!validator.isEmail(email)) {
+            res.status(400).send({msg: "Not a valid email"});
+            return;
+        }
         const student = await pool.query("SELECT * FROM students WHERE email = $1", [email]);
         if (student.rows.length !== 1) {
-            res.status(400).send({"msg": "Email not found"});
+            res.status(400).send({msg: "Email not found"});
         } else {
             const {student_id, pwd} = student.rows[0];
             bcrypt.compare(password, pwd).then((passwordCheck) => {
                 if (!passwordCheck) {
-                    return res.status(400).send({message: "Passwords does not match"});
+                    res.status(400).send({msg: "Passwords does not match"});
+                } else {
+                    const token = jwt.sign({userId: student_id, userEmail: email}, process.env.TOKEN, { expiresIn: "24h" });
+                    res.status(200).send({msg: "Login successful", email: email, token});
                 }
-                const token = jwt.sign({userId: student_id, userEmail: email}, process.env.TOKEN, { expiresIn: "24h" });
-                res.status(200).send({message: "Login successful", email: email, token});
             })
         }
     } catch (err) {
