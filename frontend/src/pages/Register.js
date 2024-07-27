@@ -20,7 +20,6 @@ const Register = () => {
                 phone_number: phonenumber,
                 password
             };
-            console.log("hey!")
             const response = await fetch(`http://localhost:4000/api/student/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json"},
