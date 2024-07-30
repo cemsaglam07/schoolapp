@@ -1,15 +1,23 @@
 import React, { Fragment, useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const EditCourse = ({course}) => {
     const [courseName, setCourseName] = useState(course.course_name);
+    const {user} = useAuthContext();
 
     const updateCourse = async (e) => {
         e.preventDefault();
+        if (!user) {
+            return;
+        }
         try {
             const body = {course_name: courseName};
             const response = await fetch(`http://localhost:4000/api/course/${course.course_id}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json"},
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${user.token}`
+                },
                 body: JSON.stringify(body)
             })
             window.location = "/";

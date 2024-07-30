@@ -1,12 +1,16 @@
 import React, {Fragment, useState, useEffect} from "react";
 import EditCourse from "./EditCourse";
+import {useAuthContext} from "../hooks/useAuthContext";
 
 const ListCourse = () => {
     const [courses, setCourses] = useState([]);
+    const {user} = useAuthContext();
 
     const getCourses = async () => {
         try {
-            const response = await fetch("http://localhost:4000/api/course/");
+            const response = await fetch("http://localhost:4000/api/course/", {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
             const jsonData = await response.json();
             setCourses(jsonData);
         } catch (err) {
@@ -16,7 +20,10 @@ const ListCourse = () => {
 
     const deleteCourse = async (id) => {
         try {
-            const deleteCourse = await fetch(`http://localhost:4000/api/course/${id}`, {method: "DELETE"});
+            const deleteCourse = await fetch(`http://localhost:4000/api/course/${id}`, {
+                method: "DELETE",
+                headers: {'Authorization': `Bearer ${user.token}`}
+            });
             setCourses(courses.filter(course => course.course_id !== id));
         } catch (err) {
             console.error(err.message);
@@ -24,8 +31,10 @@ const ListCourse = () => {
     }
 
     useEffect(() => {
-        getCourses();
-    }, []);
+        if (user) {
+            getCourses();
+        }
+    }, [user]);
 
     return (
         <Fragment>

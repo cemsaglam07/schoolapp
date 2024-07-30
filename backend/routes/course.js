@@ -1,9 +1,10 @@
 const express = require('express');
 const pool = require('../db');
 const router = express.Router();
+const requireAuth = require("../middleware/requireAuth");
 
 // Get all courses
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
     try {
         const allCourses = await pool.query("SELECT * FROM courses");
         res.json(allCourses.rows);

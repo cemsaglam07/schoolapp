@@ -3,11 +3,9 @@ const pool = require('../db');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
-import validator from 'validator';
-const auth = require("../auth");
+const requireAuth = require("../middleware/requireAuth");
 
-
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
     try {
         const allStudents = await pool.query("SELECT * FROM students");
         res.json(allStudents.rows);
@@ -16,48 +14,39 @@ router.get('/', async (req, res) => {
     }
 })
 
-
-
-// authentication endpoint
-router.get("/auth-endpoint", auth, (req, res) => {
-    res.json({ message: "You are authorized to access me" });
-  });
-
 router.post('/login', async (req, res) => {
     try {
         const {email, password} = req.body;
-        if (!validator.isEmail(email)) {
-            res.status(400).send({msg: "Not a valid email"});
-            return;
-        }
         const student = await pool.query("SELECT * FROM students WHERE email = $1", [email]);
         if (student.rows.length !== 1) {
-            res.status(400).send({msg: "Email not found"});
-        } else {
-            const {student_id, pwd} = student.rows[0];
-            bcrypt.compare(password, pwd).then((passwordCheck) => {
-                if (!passwordCheck) {
-                    res.status(400).send({msg: "Passwords does not match"});
-                } else {
-                    const token = jwt.sign({userId: student_id, userEmail: email}, process.env.TOKEN, { expiresIn: "24h" });
-                    res.status(200).send({msg: "Login successful", email: email, token});
-                }
-            })
+            return res.status(400).send({error: "Email not found"});
         }
+        const {student_id, pwd} = student.rows[0];
+        const passwordCheck = bcrypt.compare(password, pwd);
+        if (!passwordCheck) {
+            return res.status(400).send({error: "Passwords does not match"});
+        }
+        const token = jwt.sign({userId: student_id, userEmail: email}, process.env.TOKEN, { expiresIn: "24h" });
+        res.status(200).send({email, token});
     } catch (err) {
         console.error(err.message);
+        res.status(400).send({error: err.message});
     }
 })
 
 router.post('/register', async (req, res) => {
+    const {first_name, last_name, date_of_birth, email, phone_number, password} = req.body;
     try {
-        const {first_name, last_name, date_of_birth, email, phone_number, password} = req.body;
-        bcrypt.hash(password, 10).then((async pwd => {
-            const newStudent = await pool.query("INSERT INTO students (first_name, last_name, date_of_birth, email, phone_number, pwd) VALUES($1, $2, $3, $4, $5, $6) RETURNING first_name, last_name, date_of_birth, email, phone_number, pwd", [first_name, last_name, date_of_birth, email, phone_number, pwd]);
-            res.json(newStudent.rows);
-        }))
+        const pwd = bcrypt.hash(password, 10);
+        const newStudent = await pool.query(
+            "INSERT INTO students (first_name, last_name, date_of_birth, email, phone_number, pwd) VALUES($1, $2, $3, $4, $5, $6) RETURNING first_name, last_name, date_of_birth, email, phone_number, pwd",
+            [first_name, last_name, date_of_birth, email, phone_number, pwd]
+        );
+        const {student_id} = newStudent.rows[0];
+        const token = jwt.sign({userId: student_id, userEmail: email}, process.env.TOKEN, { expiresIn: "24h" });
+        res.status(200).send({email, token});
     } catch (err) {
-        console.error(err.message);
+        res.status(400).send({error: err.message});
     } 
 })
 

@@ -1,15 +1,23 @@
 import React, {Fragment, useState} from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const CreateCourse = () => {
     const [courseName, setCourseName] = useState("");
+    const {user} = useAuthContext();
 
     const onSubmitForm = async (e) => {
         e.preventDefault();
+        if (!user) {
+            return;
+        }
         try {
             const body = { course_name: courseName };
             const response = await fetch("http://localhost:4000/api/course", {
                 method: "POST",
-                headers: { "Content-Type": "application/json"},
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${user.token}`
+                },
                 body: JSON.stringify(body)
             })
             window.location = "/";

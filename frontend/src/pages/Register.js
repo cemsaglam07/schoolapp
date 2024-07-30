@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { useRegister } from "../hooks/useRegister";
 
 const Register = () => {
     const [firstname, setFirstName] = useState("");
@@ -7,30 +8,12 @@ const Register = () => {
     const [phonenumber, setPhoneNumber] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [register, setRegister] = useState(false);
+    const {register, error, isLoading} = useRegister();
 
     const submitForm = async (e) => {
         e.preventDefault();
-        try {
-            const body = {
-                first_name: firstname,
-                last_name: lastname,
-                date_of_birth: dateofbirth,
-                email,
-                phone_number: phonenumber,
-                password
-            };
-            const response = await fetch(`http://localhost:4000/api/student/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json"},
-                body: JSON.stringify(body)
-            })
-            if (response.ok && response.status === 200) {
-                setRegister(true);
-            }
-        } catch (err) {
-            console.error(err.message);
-        }
+        
+        await register(firstname, lastname, dateofbirth, email, phonenumber, password);
     }
 
     return (
@@ -61,13 +44,9 @@ const Register = () => {
                 <input type="password" className="form-control" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} id="inputPassword" />
             </div>
         </div>
-        <button type="submit" className="btn btn-primary" onClick={e => submitForm(e)}>Submit</button>
+        <button type="submit" className="btn btn-primary" onClick={e => submitForm(e)} disabled={isLoading}>Submit</button>
+        {error && <div className="alert alert-danger mt-3 mb-3" role="alert">{error}</div>}
         </form>
-        {register ? (
-          <p className="text-success">You Are Registered Successfully</p>
-        ) : (
-          <p className="text-danger">You Are Not Registered</p>
-        )}
         </>
     );
 };
