@@ -84,8 +84,8 @@ router.put('/:id', async (req, res) => {
     try {
         const {id} = req.params;
         const {course_name} = req.body;
-        const updateCourse = await pool.query("UPDATE courses SET course_name = $1 WHERE course_id = $2", [course_name, id]);
-        res.json(`Updated course with ID ${id}`);
+        const updateCourse = await pool.query("UPDATE courses SET course_name = $1 WHERE course_id = $2 RETURNING *", [course_name, id]);
+        res.json(updateCourse.rows[0]);
     } catch (err) {
         console.error(err.message);
     }

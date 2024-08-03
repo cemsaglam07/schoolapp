@@ -12,6 +12,14 @@ export const coursesReducer = (state, action) => {
       return {
         courses: [action.payload, ...state.courses]
       }
+    case 'EDIT_COURSE_NAME':
+      return {
+        courses: state.courses.map((c) =>
+          c.course_id === action.payload.course_id
+            ? { ...c, course_name: action.payload.course_name }
+            : c
+        )
+      }
     case 'DELETE_COURSE':
       return {
         courses: state.courses.filter((c) => c.course_id !== action.payload.course_id)

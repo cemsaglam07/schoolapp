@@ -22,7 +22,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).send({error: "Email not found"});
         }
         const {student_id, pwd} = student.rows[0];
-        const passwordCheck = bcrypt.compare(password, pwd);
+        const passwordCheck = await bcrypt.compare(password, pwd);
         if (!passwordCheck) {
             return res.status(400).send({error: "Passwords does not match"});
         }
@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     const {first_name, last_name, date_of_birth, email, phone_number, password} = req.body;
     try {
-        const pwd = bcrypt.hash(password, 10);
+        const pwd = await bcrypt.hash(password, 10);
         const newStudent = await pool.query(
             "INSERT INTO students (first_name, last_name, date_of_birth, email, phone_number, pwd) VALUES($1, $2, $3, $4, $5, $6) RETURNING first_name, last_name, date_of_birth, email, phone_number, pwd",
             [first_name, last_name, date_of_birth, email, phone_number, pwd]

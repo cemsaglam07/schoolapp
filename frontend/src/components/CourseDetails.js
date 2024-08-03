@@ -1,5 +1,6 @@
 import { useCoursesContext } from '../hooks/useCoursesContext';
 import { useAuthContext } from '../hooks/useAuthContext';
+import EditCourse from './EditCourse';
 
 const CourseDetails = ({ course }) => {
     const { dispatch } = useCoursesContext()
@@ -25,6 +26,7 @@ const CourseDetails = ({ course }) => {
         <div className="card" key={course.course_id}>
         <div className="card-body">
             <h5 className="card-title">{course.course_name}</h5>
+            <EditCourse course={course}/>
             <button className="btn btn-danger" onClick={deleteCourse}>Delete</button>
         </div>
         </div>
