@@ -15,7 +15,7 @@ const Layout = () => {
         <nav>
             <ul>
             <li>
-                <Link to="/">Home</Link>
+                <Link to="/courses">Courses</Link>
             </li>
             {!user && (
                 <>
