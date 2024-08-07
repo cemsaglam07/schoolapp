@@ -34,23 +34,23 @@ const EditCourse = ({course}) => {
 
     return (
         <>
-            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target={`#id${course.course_id}`}>
+            <button type="button" className="btn btn-warning" data-bs-toggle="modal" data-bs-target={`#id${course.course_id}`}>
             Edit
             </button>
 
-            <div class="modal fade" id={`id${course.course_id}`} tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" onClick={() => setCourseName(course.course_name)}>
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="editModalLabel">Edit course name</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setCourseName(course.course_name)}></button>
+            <div className="modal fade" id={`id${course.course_id}`} tabIndex="-1" aria-labelledby="editModalLabel" aria-hidden="true" onClick={() => setCourseName(course.course_name)}>
+            <div className="modal-dialog">
+                <div className="modal-content">
+                <div className="modal-header">
+                    <h1 className="modal-title fs-5" id="editModalLabel">Edit course name</h1>
+                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setCourseName(course.course_name)}></button>
                 </div>
-                <div class="modal-body">
+                <div className="modal-body">
                     <input type="text" className="form-control" value={courseName} onChange={e => setCourseName(e.target.value)}></input>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onClick={() => setCourseName(course.course_name)}>Close</button>
-                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" onClick={e => updateCourse(e)}>Save changes</button>
+                <div className="modal-footer">
+                    <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={() => setCourseName(course.course_name)}>Close</button>
+                    <button type="button" className="btn btn-warning" data-bs-dismiss="modal" onClick={e => updateCourse(e)}>Save changes</button>
                 </div>
                 </div>
             </div>

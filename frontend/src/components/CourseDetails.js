@@ -26,8 +26,12 @@ const CourseDetails = ({ course }) => {
         <div className="card my-3" key={course.course_id}>
         <div className="card-body d-flex flex-row">
             <h5 className="card-title flex-grow-1">{course.course_name}</h5>
-            <EditCourse course={course}/>
-            <button className="btn btn-danger" onClick={deleteCourse}>Delete</button>
+            {user.role === 'teacher' && (
+                <>
+                <EditCourse course={course}/>
+                <button className="btn btn-danger" onClick={deleteCourse}>Delete</button>
+                </>
+            )}
         </div>
         </div>
     );

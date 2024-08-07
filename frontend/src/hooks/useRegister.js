@@ -6,7 +6,7 @@ export const useRegister = () => {
     const [isLoading, setIsLoading] = useState(null);
     const {dispatch} = useAuthContext();
 
-    const register = async (firstname, lastname, dateofbirth, email, phonenumber, password) => {
+    const register = async (firstname, lastname, dateofbirth, email, phonenumber, password, role) => {
         setIsLoading(true);
         setError(null);
 
@@ -18,11 +18,21 @@ export const useRegister = () => {
             phone_number: phonenumber,
             password
         };
-        const response = await fetch(`http://localhost:4000/api/student/register`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json"},
-            body: JSON.stringify(body)
-        })
+        let response;
+        if (role === 'student') {
+            response = await fetch(`http://localhost:4000/api/student/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify(body)
+            })
+        } else if (role === 'teacher') {
+            response = await fetch(`http://localhost:4000/api/teacher/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify(body)
+            })
+        }
+        
         const json = await response.json();
         if (!response.ok) {
             setIsLoading(false);

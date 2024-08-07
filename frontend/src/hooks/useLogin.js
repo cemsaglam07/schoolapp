@@ -6,15 +6,25 @@ export const useLogin = () => {
     const [isLoading, setIsLoading] = useState(null)
     const { dispatch } = useAuthContext()
 
-    const login = async (email, password) => {
+    const login = async (email, password, role) => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('http://localhost:4000/api/student/login', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ email, password })
-        })
+        let response;
+        if (role === 'student') {
+            response = await fetch('http://localhost:4000/api/student/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email, password })
+            })
+        } else if (role === 'teacher') {
+            response = await fetch('http://localhost:4000/api/teacher/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email, password })
+            })
+        }
+        
         const json = await response.json();
 
         if (!response.ok) {

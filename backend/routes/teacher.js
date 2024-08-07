@@ -1,6 +1,9 @@
 const express = require('express');
 const pool = require('../db');
 const router = express.Router();
+const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+const requireAuth = require("../middleware/requireAuth");
 
 router.get('/', async (req, res) => {
     try {
@@ -9,6 +12,42 @@ router.get('/', async (req, res) => {
     } catch (err) {
         console.error(err.message);
     }
+})
+
+router.post('/login', async (req, res) => {
+    try {
+        const {email, password} = req.body;
+        const teacher = await pool.query("SELECT * FROM teachers WHERE email = $1", [email]);
+        if (student.rows.length !== 1) {
+            return res.status(400).send({error: "Email not found"});
+        }
+        const {teacher_id, pwd} = teacher.rows[0];
+        const passwordCheck = await bcrypt.compare(password, pwd);
+        if (!passwordCheck) {
+            return res.status(400).send({error: "Passwords does not match"});
+        }
+        const token = jwt.sign({userId: teacher_id, userEmail: email, role: 'teacher'}, process.env.TOKEN, { expiresIn: "24h" });
+        res.status(200).send({email, token, role: "teacher"});
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send({error: err.message});
+    }
+})
+
+router.post('/register', async (req, res) => {
+    const {first_name, last_name, date_of_birth, email, phone_number, password} = req.body;
+    try {
+        const pwd = await bcrypt.hash(password, 10);
+        const newTeacher = await pool.query(
+            "INSERT INTO teachers (first_name, last_name, date_of_birth, email, phone_number, pwd) VALUES($1, $2, $3, $4, $5, $6) RETURNING first_name, last_name, date_of_birth, email, phone_number, pwd",
+            [first_name, last_name, date_of_birth, email, phone_number, pwd]
+        );
+        const {teacher_id} = newTeacher.rows[0];
+        const token = jwt.sign({userId: teacher_id, userEmail: email, role: 'teacher'}, process.env.TOKEN, { expiresIn: "24h" });
+        res.status(200).send({email, token, role: "teacher"});
+    } catch (err) {
+        res.status(400).send({error: err.message});
+    } 
 })
 
 router.get('/:id', async (req, res) => {

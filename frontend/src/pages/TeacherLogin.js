@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { useLogin } from "../hooks/useLogin";
 
-const Login = () => {
+const TeacherLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const {login, error, isLoading} = useLogin();
@@ -9,7 +9,7 @@ const Login = () => {
 
     const submitForm = async (e) => {
         e.preventDefault()
-        await login(email, password, "student")
+        await login(email, password, "teacher")
     }
 
     return (
@@ -31,4 +31,4 @@ const Login = () => {
     );
 };
   
-export default Login;
+export default TeacherLogin;

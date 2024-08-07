@@ -26,8 +26,8 @@ router.post('/login', async (req, res) => {
         if (!passwordCheck) {
             return res.status(400).send({error: "Passwords does not match"});
         }
-        const token = jwt.sign({userId: student_id, userEmail: email}, process.env.TOKEN, { expiresIn: "24h" });
-        res.status(200).send({email, token});
+        const token = jwt.sign({userId: student_id, userEmail: email, role: 'student'}, process.env.TOKEN, { expiresIn: "24h" });
+        res.status(200).send({email, token, role: "student"});
     } catch (err) {
         console.error(err.message);
         res.status(400).send({error: err.message});

@@ -24,9 +24,10 @@ const Courses = () => {
         }
     }, [dispatch, user])
 
+    console.log("user.role: ", user.role);
     return (
         <div className="home mx-5">
-            <CreateCourse />
+            {user.role === 'teacher' && <CreateCourse />}
             <div className="courses">
                 {courses && courses.map((course) => (
                     <CourseDetails key={course.course_id} course={course} />

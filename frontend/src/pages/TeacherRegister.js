@@ -13,7 +13,7 @@ const Register = () => {
     const submitForm = async (e) => {
         e.preventDefault();
         
-        await register(firstname, lastname, dateofbirth, email, phonenumber, password, "student");
+        await register(firstname, lastname, dateofbirth, email, phonenumber, password, "teacher");
     }
 
     return (
