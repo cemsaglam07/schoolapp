@@ -25,7 +25,7 @@ const Courses = () => {
     }, [dispatch, user])
 
     return (
-        <div className="home">
+        <div className="home mx-5">
             <CreateCourse />
             <div className="courses">
                 {courses && courses.map((course) => (

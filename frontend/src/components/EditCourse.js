@@ -33,7 +33,7 @@ const EditCourse = ({course}) => {
     }
 
     return (
-        <Fragment>
+        <>
             <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target={`#id${course.course_id}`}>
             Edit
             </button>
@@ -55,7 +55,7 @@ const EditCourse = ({course}) => {
                 </div>
             </div>
             </div>
-        </Fragment>
+        </>
     )
 }
 

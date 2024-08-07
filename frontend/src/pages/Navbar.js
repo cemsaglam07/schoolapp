@@ -1,8 +1,8 @@
-import { Outlet, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {useLogout} from '../hooks/useLogout';
 import { useAuthContext } from "../hooks/useAuthContext";
 
-const Layout = () => {
+const Navbar = () => {
     const {logout} = useLogout();
     const {user} = useAuthContext();
 
@@ -35,10 +35,8 @@ const Layout = () => {
             )}
             </ul>
         </nav>
-
-        <Outlet />
         </>
   )
 };
 
-export default Layout;
+export default Navbar;

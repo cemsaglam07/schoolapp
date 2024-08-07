@@ -23,9 +23,9 @@ const CourseDetails = ({ course }) => {
     }
 
     return (
-        <div className="card" key={course.course_id}>
-        <div className="card-body">
-            <h5 className="card-title">{course.course_name}</h5>
+        <div className="card my-3" key={course.course_id}>
+        <div className="card-body d-flex flex-row">
+            <h5 className="card-title flex-grow-1">{course.course_name}</h5>
             <EditCourse course={course}/>
             <button className="btn btn-danger" onClick={deleteCourse}>Delete</button>
         </div>
