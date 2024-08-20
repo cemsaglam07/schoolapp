@@ -68,7 +68,7 @@ router.post('/:id/students/:student', async (req, res) => {
     }
 })
 
-// Add student to course
+// Add teacher to course
 router.post('/:id/teachers/:teacher', async (req, res) => {
     try {
         const {id, teacher} = req.params;
@@ -120,7 +120,7 @@ router.delete('/:id/teachers/:teacher', async (req, res) => {
     try {
         const {id, teacher} = req.params;
         const deleteTeacherCourses = await pool.query("DELETE FROM teacher_courses WHERE course_id = $1 AND teacher_id = $2", [id, teacher]);
-        res.json(`Removed student with ID ${student} from course with ID ${id}`);
+        res.json(`Removed student with ID ${teacher} from course with ID ${id}`);
     } catch (err) {
         console.error(err.message);
     }
