@@ -12,28 +12,33 @@ const Navbar = () => {
 
     return (
         <>
-        <nav>
-            <ul>
-            <li>
+        <nav className="navbar navbar-expand-sm">
+            <div className="container-fluid">
+            <ul className="navbar-nav">
+            <li className="nav-item mx-3">
                 <Link to="/courses">Courses</Link>
             </li>
+            </ul>
             {!user && (
-                <>
-                <li>
-                    <Link to="/login">Login</Link>
-                </li>
-                <li>
-                    <Link to="/register">Register</Link>
-                </li>
-                </>
+                <ul className="navbar-nav ms-auto">
+                    <li className="nav-item mx-3">
+                        <Link to="/login">Login</Link>
+                    </li>
+                    <li className="nav-item mx-3">
+                        <Link to="/register">Register</Link>
+                    </li>
+                </ul>
             )}
             {user && (
-                <li>
-                    <span>{user.email}</span>
-                    <button onClick={handleClick}>Logout</button>
-                </li>
+                <ul className="navbar-nav mx-3 ms-auto">
+                    <li className="nav-item">
+                        <span>{user.email}</span>
+                        <button onClick={handleClick}>Logout</button>
+                    </li>
+                </ul>
             )}
-            </ul>
+            
+            </div>
         </nav>
         </>
   )
