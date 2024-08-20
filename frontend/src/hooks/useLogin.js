@@ -10,7 +10,6 @@ export const useLogin = () => {
         setIsLoading(true);
         setError(null);
 
-        console.log("role:", role);
         let response;
         if (role === 'student') {
             response = await fetch('http://localhost:4000/api/student/login', {
@@ -27,7 +26,6 @@ export const useLogin = () => {
         }
         
         const json = await response.json();
-        console.log("json:", json);
         if (!response.ok) {
             setIsLoading(false);
             setError(json.error);
