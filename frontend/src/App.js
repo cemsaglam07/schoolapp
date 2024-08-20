@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import NoPage from "./pages/NoPage";
 import TeacherLogin from './pages/TeacherLogin';
 import TeacherRegister from './pages/TeacherRegister';
+import Course from './pages/Course';
 import { useAuthContext } from './hooks/useAuthContext';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
                 <Route path="register" element={!user ? <Register /> : <Navigate to="/" />} />
                 <Route path="teacher/login" element={!user ? <TeacherLogin /> : <Navigate to="/" />} />
                 <Route path="teacher/register" element={!user ? <TeacherRegister /> : <Navigate to="/" />} />
+                <Route path="course/:id" element={<Course />} />
                 <Route path="*" element={<NoPage />} />
             </Routes>
         </BrowserRouter>

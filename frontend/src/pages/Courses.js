@@ -24,7 +24,6 @@ const Courses = () => {
         }
     }, [dispatch, user])
 
-    console.log("user.role: ", user.role);
     return (
         <div className="home mx-5">
             {user.role === 'teacher' && <CreateCourse />}

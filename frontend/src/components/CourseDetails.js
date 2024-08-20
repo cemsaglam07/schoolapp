@@ -1,6 +1,7 @@
 import { useCoursesContext } from '../hooks/useCoursesContext';
 import { useAuthContext } from '../hooks/useAuthContext';
 import EditCourse from './EditCourse';
+import { Link } from 'react-router-dom';
 
 const CourseDetails = ({ course }) => {
     const { dispatch } = useCoursesContext()
@@ -26,6 +27,11 @@ const CourseDetails = ({ course }) => {
         <div className="card my-3" key={course.course_id}>
         <div className="card-body d-flex flex-row">
             <h5 className="card-title flex-grow-1">{course.course_name}</h5>
+            <Link to={`/course/${course.course_id}`}>
+                <button className="btn btn-success">
+                    Open
+                </button>
+            </Link>
             {user.role === 'teacher' && (
                 <>
                 <EditCourse course={course}/>
