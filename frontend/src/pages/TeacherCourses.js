@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useCoursesContext } from "../hooks/useCoursesContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import CourseDetails from '../components/CourseDetails';
+import CreateCourse from '../components/CreateCourse';
 
-const Courses = () => {
+const TeacherCourses = () => {
     const {courses, dispatch} = useCoursesContext();
     const {user} = useAuthContext();
 
@@ -25,7 +26,8 @@ const Courses = () => {
 
     return (
         <div className="home mx-5">
-            <h1>Courses</h1>
+            <h1>Teacher Courses</h1>
+            <CreateCourse />
             <div className="courses">
                 {courses && courses.map((course) => (
                     <CourseDetails key={course.course_id} course={course} />
@@ -35,4 +37,4 @@ const Courses = () => {
     );
 };
   
-export default Courses;
+export default TeacherCourses;

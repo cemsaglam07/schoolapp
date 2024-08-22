@@ -11,6 +11,7 @@ import TeacherRegister from './pages/TeacherRegister';
 import Course from './pages/Course';
 import { useAuthContext } from './hooks/useAuthContext';
 import TeacherCourse from './pages/TeacherCourse';
+import TeacherCourses from './pages/TeacherCourses';
 
 function App() {
     const { user } = useAuthContext();
@@ -20,7 +21,7 @@ function App() {
             <Navbar />
             <Routes>
                 <Route index element={user ? <Home /> : <Navigate to="/login"/> } />
-                <Route path="courses" element={user ? <Courses /> : <Navigate to="/login"/> } />
+                <Route path="courses" element={user ? (user?.role === "teacher" ? <TeacherCourses /> : (user?.role === "student" ? <Courses /> : <Navigate to="/login" />)) : <Navigate to="/login" /> } />
                 <Route path="login" element={!user ? <Login /> : <Navigate to="/" />} />
                 <Route path="register" element={!user ? <Register /> : <Navigate to="/" />} />
                 <Route path="teacher/login" element={!user ? <TeacherLogin /> : <Navigate to="/" />} />
