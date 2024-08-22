@@ -6,7 +6,15 @@ const requireAuth = require("../middleware/requireAuth");
 // Get all courses
 router.get('/', requireAuth, async (req, res) => {
     try {
-        const allCourses = await pool.query("SELECT * FROM courses");
+        const id = req.user.userId;
+        let allCourses;
+        if (req.user.role === 'student') {
+            allCourses = await pool.query("SELECT c.course_id, c.course_name FROM courses c JOIN student_courses sc ON c.course_id = sc.course_id WHERE sc.student_id = $1", [id]);
+        } else if (req.user.role === 'teacher') {
+            allCourses = await pool.query("SELECT c.course_id, c.course_name FROM courses c JOIN teacher_courses tc ON c.course_id = tc.course_id WHERE tc.teacher_id = $1", [id]);
+        } else {
+            throw new Error("user role undefined");
+        }
         res.json(allCourses.rows);
     } catch (err) {
         console.error(err.message);
@@ -47,10 +55,14 @@ router.get('/:id/teachers', async (req, res) => {
 })
 
 // Create course
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
     try {
+        console.log("req.userr create course: ", req.user);
         const {course_name} = req.body;
         const newCourse = await pool.query("INSERT INTO courses (course_name) VALUES($1) RETURNING *", [course_name]);
+        const id = newCourse.rows[0].course_id;
+        const teacher_id = req.user.userId;
+        const newTeacherCourse = await pool.query("INSERT INTO teacher_courses (teacher_id, course_id) VALUES($1, $2)", [teacher_id, id]);
         res.json(newCourse.rows[0]);
     } catch (err) {
         console.error(err.message);

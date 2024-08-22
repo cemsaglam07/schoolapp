@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useCoursesContext } from "../hooks/useCoursesContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import CourseDetails from '../components/CourseDetails';

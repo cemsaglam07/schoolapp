@@ -17,8 +17,6 @@ router.get('/', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const {email, password} = req.body;
-        console.log("email: ", email);
-        console.log("password: ", password);
         const teacher = await pool.query("SELECT * FROM teachers WHERE email = $1", [email]);
         if (teacher.rows.length !== 1) {
             return res.status(400).send({error: "Email not found"});
