@@ -10,7 +10,6 @@ const TeacherCourse = () => {
     const [students, setStudents] = useState([]);
     const [teachers, setTeachers] = useState([]);
 
-
     const [studentOptions, setStudentOptions] = useState([]);
     const [selectedStudent, setSelectedStudent] = useState();
     const [teacherOptions, setTeacherOptions] = useState([]);
