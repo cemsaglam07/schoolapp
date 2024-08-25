@@ -1,6 +1,7 @@
 import {useParams} from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useState, useEffect } from "react";
+import axios from 'axios';
 
 const TeacherCourse = () => {
     const {id} = useParams();
@@ -14,6 +15,8 @@ const TeacherCourse = () => {
     const [selectedStudent, setSelectedStudent] = useState();
     const [teacherOptions, setTeacherOptions] = useState([]);
     const [selectedTeacher, setSelectedTeacher] = useState();
+
+    const [file, setFile] = useState([]);
 
     const getCourse = async () => {
         const response = await fetch(`http://localhost:4000/api/course/${id}`, {
@@ -109,6 +112,13 @@ const TeacherCourse = () => {
         }
     };
 
+    const upload = async () => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await axios.post('http://localhost:4000/upload', formData).catch(err => console.log(err));
+        console.log("data axios: ", response.data);
+    }
+
     useEffect(() => {
         if (user) {
             getCourse();
@@ -184,6 +194,12 @@ const TeacherCourse = () => {
                 </div>
                 <div className="col">
                     <h2>Classroom material</h2>
+                    <form action="/upload"encType="multipart/form-data">
+                        <div className="input-group mb-3">
+                            <input type="file" className="form-control" id="upload" onChange={(e) => setFile(e.target.files[0])}  />
+                            <button className="btn btn-outline-secondary" type="button" onClick={upload}>Upload</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

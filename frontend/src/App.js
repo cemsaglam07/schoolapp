@@ -12,6 +12,7 @@ import Course from './pages/Course';
 import { useAuthContext } from './hooks/useAuthContext';
 import TeacherCourse from './pages/TeacherCourse';
 import TeacherCourses from './pages/TeacherCourses';
+import FileDownload from './pages/FileDownload';
 
 function App() {
     const { user } = useAuthContext();
@@ -27,6 +28,7 @@ function App() {
                 <Route path="teacher/login" element={!user ? <TeacherLogin /> : <Navigate to="/" />} />
                 <Route path="teacher/register" element={!user ? <TeacherRegister /> : <Navigate to="/" />} />
                 <Route path="course/:id" element={ user ? (user?.role === "teacher" ? <TeacherCourse /> : (user?.role === "student" ? <Course /> : <Navigate to="/" />)) : <Navigate to="/login" />} />
+                <Route path="files/:filename" element={<FileDownload />} />
                 <Route path="*" element={<NoPage />} />
             </Routes>
         </BrowserRouter>
