@@ -109,6 +109,7 @@ router.delete('/:id', async (req, res) => {
         const {id} = req.params;
         const deleteStudentCourses = await pool.query("DELETE FROM student_courses WHERE course_id = $1", [id]);
         const deleteTeacherCourses = await pool.query("DELETE FROM teacher_courses WHERE course_id = $1", [id]);
+        const deleteCourseFiles = await pool.query("DELETE FROM files WHERE course_id = $1", [id]);
         const deleteCourse = await pool.query("DELETE FROM courses WHERE course_id = $1 RETURNING *", [id]);
         res.json(deleteCourse.rows[0]);
     } catch (err) {

@@ -1,6 +1,7 @@
 import {useParams} from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const TeacherCourse = () => {
@@ -17,6 +18,7 @@ const TeacherCourse = () => {
     const [selectedTeacher, setSelectedTeacher] = useState();
 
     const [file, setFile] = useState([]);
+    const [files, setFiles] = useState([]);
 
     const getCourse = async () => {
         const response = await fetch(`http://localhost:4000/api/course/${id}`, {
@@ -115,8 +117,18 @@ const TeacherCourse = () => {
     const upload = async () => {
         const formData = new FormData();
         formData.append('file', file);
-        const response = await axios.post('http://localhost:4000/upload', formData).catch(err => console.log(err));
-        console.log("data axios: ", response.data);
+        const response = await axios.post(`http://localhost:4000/upload/${id}`, formData).catch(err => console.log(err));
+        if (response.status === 200) { // response.ok
+            getFiles();
+        }
+    }
+
+    const getFiles = async () => {
+        const response = await fetch(`http://localhost:4000/upload/${id}/`, {
+            headers: {'Authorization': `Bearer ${user.token}`},
+        })
+        const json = await response.json();
+        setFiles(json);
     }
 
     useEffect(() => {
@@ -126,6 +138,7 @@ const TeacherCourse = () => {
             getTeachers();
             getStudentOptions();
             getTeacherOptions();
+            getFiles();
         }
     }, [user, id]);
 
@@ -200,6 +213,23 @@ const TeacherCourse = () => {
                             <button className="btn btn-outline-secondary" type="button" onClick={upload}>Upload</button>
                         </div>
                     </form>
+
+                    {files && files.length === 0 ? (
+                        <p>No files found</p>
+                    ) : (
+                        files.map(file => (
+                            <div className="card" key={file.file_id}>
+                            <div className="card-body d-flex flex-row">
+                                <p className="card-title flex-grow-1">{file.name}</p>
+                                <Link to={`/files/${file.path}`}>
+                                    <button className="btn btn-success">
+                                        Download
+                                    </button>
+                                </Link>
+                            </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>
