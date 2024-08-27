@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const pool = require('./db');
+const path = require('path');
+const fs = require('fs');
 const app = express();
 const studentRoutes = require('./routes/student');
 const teacherRoutes = require('./routes/teacher');
@@ -69,6 +71,40 @@ app.get("/upload/:id", requireAuth, async (req, res) => {
             throw new Error("user role undefined");
         }
         res.json(allFiles.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
+app.delete("/upload/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const response = await pool.query("SELECT path FROM files WHERE file_id = $1", [id]);
+        const filePath = path.join(__dirname, 'public', 'Files', response.rows[0].path);
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                return res.status(404).json({ error: "File not found on server" });
+            }
+            fs.unlink(filePath, async (err) => {
+                if (err) {
+                    return res.status(500).json({ error: "Error deleting the file" });
+                }
+                await pool.query("DELETE FROM files WHERE file_id = $1", [id]);
+                res.status(200).json({ message: "File deleted successfully" });
+            });
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+app.put("/upload/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {filename} = req.body;
+        const updateCourse = await pool.query("UPDATE files SET name = $1 WHERE file_id = $2 RETURNING *", [filename, id]);
+        res.json(updateCourse.rows[0])
     } catch (err) {
         console.error(err.message);
     }

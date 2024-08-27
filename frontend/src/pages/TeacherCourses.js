@@ -26,7 +26,6 @@ const TeacherCourses = () => {
 
     return (
         <div className="home mx-5">
-            <h1>Teacher Courses</h1>
             <CreateCourse />
             <div className="courses">
                 {courses && courses.map((course) => (

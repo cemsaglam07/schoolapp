@@ -131,6 +131,18 @@ const TeacherCourse = () => {
         setFiles(json);
     }
 
+    const deleteFiles = async (fileId) => {
+        const response = await fetch(`http://localhost:4000/upload/${fileId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }
+        });
+        if (response.ok) {
+            getFiles();
+        }
+    }
+
     useEffect(() => {
         if (user) {
             getCourse();
@@ -207,7 +219,7 @@ const TeacherCourse = () => {
                 </div>
                 <div className="col">
                     <h2>Classroom material</h2>
-                    <form action="/upload"encType="multipart/form-data">
+                    <form action="/upload" encType="multipart/form-data">
                         <div className="input-group mb-3">
                             <input type="file" className="form-control" id="upload" onChange={(e) => setFile(e.target.files[0])}  />
                             <button className="btn btn-outline-secondary" type="button" onClick={upload}>Upload</button>
@@ -221,11 +233,13 @@ const TeacherCourse = () => {
                             <div className="card" key={file.file_id}>
                             <div className="card-body d-flex flex-row">
                                 <p className="card-title flex-grow-1">{file.name}</p>
+                                <p>{file.file_id}</p>
                                 <Link to={`/files/${file.path}`}>
                                     <button className="btn btn-success">
                                         Download
                                     </button>
                                 </Link>
+                                <button className="btn btn-danger" onClick={() => deleteFiles(file.file_id)}>Delete</button>
                             </div>
                             </div>
                         ))

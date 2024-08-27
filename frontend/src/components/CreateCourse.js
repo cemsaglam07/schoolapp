@@ -38,7 +38,6 @@ const CreateCourse = () => {
 
     return (
         <Fragment>
-            <h1 className="text-center mt-5">Course</h1>
             <form className="d-flex mt-5" onSubmit={onSubmitForm}>
                 <input type="text" className="form-control" value={courseName} onChange={e => setCourseName(e.target.value)} />
                 <button className="btn btn-success">Create course</button>
