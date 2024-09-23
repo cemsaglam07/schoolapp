@@ -64,7 +64,7 @@ app.get("/upload/:id", requireAuth, async (req, res) => {
         const {role} = req.user;
         let allFiles;
         if (role === "student") {
-            allFiles = await pool.query("SELECT * FROM files WHERE course_id = $1 AND visible = true");
+            allFiles = await pool.query("SELECT * FROM files WHERE course_id = $1 AND visible = true", [id]);
         } else if (role === "teacher") {
             allFiles = await pool.query("SELECT * FROM files WHERE course_id = $1", [id]);
         } else {
@@ -89,8 +89,8 @@ app.delete("/upload/:id", async (req, res) => {
                 if (err) {
                     return res.status(500).json({ error: "Error deleting the file" });
                 }
-                await pool.query("DELETE FROM files WHERE file_id = $1", [id]);
-                res.status(200).json({ message: "File deleted successfully" });
+                const deleteFile = await pool.query("DELETE FROM files WHERE file_id = $1 RETURNING *", [id]);
+                res.json(deleteFile.rows[0]);
             });
         });
     } catch (err) {
@@ -102,9 +102,16 @@ app.delete("/upload/:id", async (req, res) => {
 app.put("/upload/:id", async (req, res) => {
     try {
         const {id} = req.params;
-        const {filename} = req.body;
-        const updateCourse = await pool.query("UPDATE files SET name = $1 WHERE file_id = $2 RETURNING *", [filename, id]);
-        res.json(updateCourse.rows[0])
+        const {method} = req.body;
+        if (method === "nameChange") {
+            const {filename} = req.body;
+            const updateCourse = await pool.query("UPDATE files SET name = $1 WHERE file_id = $2 RETURNING *", [filename, id]);
+            res.json(updateCourse.rows[0])
+        } else if (method === "visibility") {
+            const {visible} = req.body;
+            // TODO: Implement visibility toggle
+        }
+        
     } catch (err) {
         console.error(err.message);
     }

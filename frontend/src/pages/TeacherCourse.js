@@ -1,12 +1,14 @@
+import { useState, useEffect } from "react";
 import {useParams} from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { useFilesContext } from "../hooks/useFilesContext";
+import FileDetails from '../components/FileDetails';
+import CreateFile from "../components/CreateFile";
 
 const TeacherCourse = () => {
     const {id} = useParams();
     const {user} = useAuthContext();
+    const {files, dispatch} = useFilesContext();
 
     const [course, setCourse] = useState([]);
     const [students, setStudents] = useState([]);
@@ -16,9 +18,6 @@ const TeacherCourse = () => {
     const [selectedStudent, setSelectedStudent] = useState();
     const [teacherOptions, setTeacherOptions] = useState([]);
     const [selectedTeacher, setSelectedTeacher] = useState();
-
-    const [file, setFile] = useState([]);
-    const [files, setFiles] = useState([]);
 
     const getCourse = async () => {
         const response = await fetch(`http://localhost:4000/api/course/${id}`, {
@@ -114,34 +113,21 @@ const TeacherCourse = () => {
         }
     };
 
-    const upload = async () => {
-        const formData = new FormData();
-        formData.append('file', file);
-        const response = await axios.post(`http://localhost:4000/upload/${id}`, formData).catch(err => console.log(err));
-        if (response.status === 200) { // response.ok
-            getFiles();
-        }
-    }
-
-    const getFiles = async () => {
-        const response = await fetch(`http://localhost:4000/upload/${id}/`, {
-            headers: {'Authorization': `Bearer ${user.token}`},
-        })
-        const json = await response.json();
-        setFiles(json);
-    }
-
-    const deleteFiles = async (fileId) => {
-        const response = await fetch(`http://localhost:4000/upload/${fileId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${user.token}`
+    useEffect(() => {
+        const getFiles = async () => {
+            const response = await fetch(`http://localhost:4000/upload/${id}/`, {
+                headers: {'Authorization': `Bearer ${user.token}`},
+            })
+            const json = await response.json();
+            if (response.ok) {
+                dispatch({type: 'SET_FILES', payload: json})
             }
-        });
-        if (response.ok) {
+        }
+
+        if (user) {
             getFiles();
         }
-    }
+    }, [dispatch, user, id])
 
     useEffect(() => {
         if (user) {
@@ -150,10 +136,10 @@ const TeacherCourse = () => {
             getTeachers();
             getStudentOptions();
             getTeacherOptions();
-            getFiles();
         }
     }, [user, id]);
 
+    console.log(files);
     return (
         <>
         <h1 className="text-center">{course.course_name}</h1>
@@ -219,30 +205,13 @@ const TeacherCourse = () => {
                 </div>
                 <div className="col">
                     <h2>Classroom material</h2>
-                    <form action="/upload" encType="multipart/form-data">
-                        <div className="input-group mb-3">
-                            <input type="file" className="form-control" id="upload" onChange={(e) => setFile(e.target.files[0])}  />
-                            <button className="btn btn-outline-secondary" type="button" onClick={upload}>Upload</button>
-                        </div>
-                    </form>
-
-                    {files && files.length === 0 ? (
-                        <p>No files found</p>
-                    ) : (
+                    <CreateFile />
+                    {files && files.length > 0 ? (
                         files.map(file => (
-                            <div className="card" key={file.file_id}>
-                            <div className="card-body d-flex flex-row">
-                                <p className="card-title flex-grow-1">{file.name}</p>
-                                <p>{file.file_id}</p>
-                                <Link to={`/files/${file.path}`}>
-                                    <button className="btn btn-success">
-                                        Download
-                                    </button>
-                                </Link>
-                                <button className="btn btn-danger" onClick={() => deleteFiles(file.file_id)}>Delete</button>
-                            </div>
-                            </div>
+                            <FileDetails key={file.file_id} file={file} />
                         ))
+                    ) : (
+                        <p>No files found</p>
                     )}
                 </div>
             </div>

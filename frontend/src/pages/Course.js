@@ -1,10 +1,13 @@
+import { useState, useEffect } from "react";
 import {useParams} from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useState, useEffect } from "react";
+import { useFilesContext } from "../hooks/useFilesContext";
+import FileDetails from '../components/FileDetails';
 
 const Course = () => {
     const {id} = useParams();
     const {user} = useAuthContext();
+    const {files, dispatch} = useFilesContext();
 
     const [course, setCourse] = useState([]);
     const [students, setStudents] = useState([]);
@@ -33,6 +36,22 @@ const Course = () => {
         const json = await response.json();
         setTeachers(json);
     }
+
+    useEffect(() => {
+        const getFiles = async () => {
+            const response = await fetch(`http://localhost:4000/upload/${id}/`, {
+                headers: {'Authorization': `Bearer ${user.token}`},
+            })
+            const json = await response.json();
+            if (response.ok) {
+                dispatch({type: 'SET_FILES', payload: json})
+            }
+        }
+
+        if (user) {
+            getFiles();
+        }
+    }, [dispatch, user, id])
 
     useEffect(() => {
         if (user) {
@@ -79,6 +98,13 @@ const Course = () => {
                 </div>
                 <div className="col">
                     <h2>Classroom material</h2>
+                    {files && files.length === 0 ? (
+                        <p>No files found</p>
+                    ) : (
+                        files.map(file => (
+                            <FileDetails key={file.file_id} file={file} />
+                        ))
+                    )}
                 </div>
             </div>
         </div>
