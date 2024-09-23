@@ -20,6 +20,14 @@ export const filesReducer = (state, action) => {
             : f
         )
       }
+    case 'EDIT_FILE_VISIBILITY':
+      return {
+        files: state.files.map((f) =>
+          f.file_id === action.payload.file_id
+            ? { ...f, visible: action.payload.visible }
+            : f
+        )
+      }
     case 'DELETE_FILE':
       return {
         files: state.files.filter((f) => f.file_id !== action.payload.file_id)

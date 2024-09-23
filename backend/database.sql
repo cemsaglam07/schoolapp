@@ -40,3 +40,12 @@ CREATE TABLE teacher_courses(
     FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id),
     FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );
+
+CREATE TABLE files (
+    file_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    path TEXT NOT NULL,
+    visible BOOLEAN NOT NULL,
+    course_id INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);

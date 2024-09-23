@@ -109,7 +109,8 @@ app.put("/upload/:id", async (req, res) => {
             res.json(updateCourse.rows[0])
         } else if (method === "visibility") {
             const {visible} = req.body;
-            // TODO: Implement visibility toggle
+            const updateVisible = await pool.query("UPDATE files SET visible = $1 WHERE file_id = $2 RETURNING *", [visible, id]);
+            res.json(updateVisible.rows[0])
         }
         
     } catch (err) {
